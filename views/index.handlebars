@@ -1,0 +1,28 @@
+<div class="jumbotron">
+  <h1 class="display-4">Bem vindo ao Blog Gamistico</h1>
+  <p class="lead">Esse é um lugar para compartilhar informações sobre jogos e criar uma comunidade de jogadores.</p>
+  <hr class="my-4">
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+  </p>
+</div>
+
+<h2>Postagens recentes</h2>
+
+{{#each postagens}}
+
+<div class="card">
+    <div class="card-body">
+
+        <h3>{{titulo}}</h3>
+        <p>{{descricao}}</p>
+        <a href="/postagem/{{_id}}" ><button class="btn btn-success">Leia mais</button></a>
+        <hr>
+        <small>Categoria: {{categoria.nome}}</small>
+        <small>Data de publicação: {{data}}</small>
+        
+    </div>
+</div>
+{{else}}
+<h5>Nenhuma postagem</h5>
+{{/each}}
