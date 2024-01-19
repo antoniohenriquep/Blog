@@ -12,12 +12,19 @@
         <li class="nav-item">
           <a class="nav-link" href="/categorias">Genero</a>
         </li>
+        {{#if user}}
+        <li class="nav-item">
+          <a class="nav-link" href="/usuario/logout" >Logout</a>
+        </li>
+        {{else}}
         <li class="nav-item">
           <a class="nav-link" href="/usuario/login" >Login</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/usuario/registro" >Registrar-se</a>
         </li>
+
+        {{/if}}
       </ul>
 
       </form>

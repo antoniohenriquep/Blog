@@ -8,19 +8,20 @@ const Categoria = mongoose.model('categorias')
 require('../models/Postagem')
 const Postagem= mongoose.model('postagens')
 
+const {isAdmin} = require("../helpers/isAdmin")
 
 
-router.get('/',(req,res) =>{
+router.get('/',isAdmin,(req,res) =>{
     res.render('admin/index')
 })
 
 
-router.get('/posts', (req,res)=>{
+router.get('/posts',isAdmin, (req,res)=>{
     res.send('Posts')
 })
 
 
-router.get('/categorias', (req,res) =>{
+router.get('/categorias', isAdmin, (req,res) =>{
     Categoria.find().lean().then((categorias) =>{
         //console.log(categorias)
         res.render('admin/categorias', {categorias:categorias})
@@ -32,7 +33,7 @@ router.get('/categorias', (req,res) =>{
 })
 
 
-router.get('/categorias/add', (req,res) =>{
+router.get('/categorias/add', isAdmin, (req,res) =>{
     res.render('admin/addcategorias')
 })
 
@@ -46,7 +47,7 @@ router.get('/categorias/edit/:id', (req,res)=>{
     
 })
 
-router.post('/categorias/edit', (req,res)=>{
+router.post('/categorias/edit', isAdmin, (req,res)=>{
     Categoria.findOne({_id: req.body.id}).then((categoria) =>{
         categoria.nome = req.body.nome
         categoria.slug = req.body.slug
@@ -66,7 +67,7 @@ router.post('/categorias/edit', (req,res)=>{
 })
 
 
-router.post('/categorias/novacategoria',(req,res)=>{
+router.post('/categorias/novacategoria', isAdmin,(req,res)=>{
 
     var erros = []
     if(!req.body.nome || typeof req.body.nome == undefined || req.body.nome == null)
@@ -113,7 +114,7 @@ router.post('/categorias/novacategoria',(req,res)=>{
 })
 
 
-router.post('/categorias/deletar',(req,res)=>{
+router.post('/categorias/deletar', isAdmin, (req,res)=>{
     Categoria.findOneAndRemove({_id:req.body.id}).then(()=>{
         req.flash('success_msg','Categoria deletada!')
         res.redirect('/admin/categorias')
@@ -123,14 +124,14 @@ router.post('/categorias/deletar',(req,res)=>{
     })
 })
 
-router.get("/postagens",(req,res) =>{
+router.get("/postagens", isAdmin, (req,res) =>{
     Postagem.find().lean().populate({path: 'categoria', strictPopulate: false}).sort({data:'desc'}).then((postagens)=>{
         res.render("admin/postagens",{postagens:postagens})
     })
     
 })
 
-router.get('/postagens/add',(req,res) =>{
+router.get('/postagens/add', isAdmin, (req,res) =>{
     Categoria.find().lean().then((categorias)=>{
         res.render("admin/addpostagem", {categorias:categorias})
     }).catch((err) =>{
@@ -140,7 +141,7 @@ router.get('/postagens/add',(req,res) =>{
     
 })
 
-router.post("/postagens/nova", (req,res)=>{
+router.post("/postagens/nova", isAdmin, (req,res)=>{
     const novaPostagem = {
         titulo: req.body.titulo,
         descricao: req.body.descricao,
@@ -158,7 +159,7 @@ router.post("/postagens/nova", (req,res)=>{
     })
 })
 
-router.get("/postagens/edit/:id",(req,res)=>{
+router.get("/postagens/edit/:id", isAdmin, (req,res)=>{
     Postagem.findOne({_id:req.params.id}).lean().then((postagem)=>{
         Categoria.find().lean().then((categorias)=>{
             res.render("admin/editpostagens",{categorias:categorias, postagem:postagem})
@@ -172,7 +173,7 @@ router.get("/postagens/edit/:id",(req,res)=>{
     })
 })
 
-router.post("/postagem/edit",(req,res)=>{
+router.post("/postagem/edit", isAdmin, (req,res)=>{
     Postagem.findOne({_id:req.body.id}).then((postagem)=>{
 
         postagem.titulo = req.body.titulo
@@ -192,7 +193,7 @@ router.post("/postagem/edit",(req,res)=>{
     })
 })
 
-router.get("/postagens/deletar/:id",(req,res)=>{
+router.get("/postagens/deletar/:id", isAdmin, (req,res)=>{
     Postagem.findOneAndRemove({_id:req.params.id}).then(()=>{
         req.flash("success_msg","A postagem foi deletada")
         res.redirect("/admin/postagens")

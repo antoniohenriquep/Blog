@@ -17,7 +17,12 @@ const Usuario = new Schema({
     senha:{
         type:String,
         required:true
-    }
+    },
+    postagens:[{
+        type:Schema.Types.ObjectId,
+        ref: "postagens"
+    }]
+    
 })
 
 mongoose.model("usuarios",Usuario)

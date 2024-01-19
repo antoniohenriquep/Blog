@@ -26,6 +26,10 @@ const Postagem = new Schema({
     data:{
         type: Date,
         default:Date.now()
+    },
+    usuario:{
+        type: Schema.Types.ObjectId,
+        ref:"usuarios"
     }
 })
 

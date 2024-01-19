@@ -1,0 +1,2 @@
+- Vincular a postagem ao seu criador, e conseguir exibir todas as postagens que um usuario fez
+- Permitir que outras pessoas façam comentarios em postagens de terceiros
