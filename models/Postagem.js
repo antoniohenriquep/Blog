@@ -29,7 +29,8 @@ const Postagem = new Schema({
     },
     usuario:{
         type: Schema.Types.ObjectId,
-        ref:"usuarios"
+        ref:"usuarios",
+        required:true
     }
 })
 

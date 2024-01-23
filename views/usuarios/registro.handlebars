@@ -9,13 +9,14 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="/usuario/registro/" method="POST">
+        <form action="/usuario/registro/" method="POST" enctype="multipart/form-data">
             <label for="nome">Nome:</label>
             <input type="text" name="nome" id="" class="form-control"required>
             
             <label for="email">Email:</label>
             <input type="email" name="email" id="" class="form-control" required>
-
+            <label for="imagemPerfil">Escolha uma imagem de perfil:</label>
+            <input type="file" name="imagemPerfil" accept="image/*" class="form-control">
             <label for="senha">Senha:</label>
             <input type="password" name="senha" id="" class="form-control">
 

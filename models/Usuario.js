@@ -21,7 +21,11 @@ const Usuario = new Schema({
     postagens:[{
         type:Schema.Types.ObjectId,
         ref: "postagens"
-    }]
+    }],
+    imagemPerfil:{
+        dados:Buffer,
+        contentType: String
+    }
     
 })
 

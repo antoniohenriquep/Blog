@@ -2,12 +2,26 @@
   <h1 class="display-4">Bem vindo ao Blog Gamistico</h1>
   <p class="lead">Esse é um lugar para compartilhar informações sobre jogos e criar uma comunidade de jogadores.</p>
   <hr class="my-4">
+  {{#if user}}
+
+  {{else}}
   <p class="lead">
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    <a class="btn btn-primary btn-lg" href="/usuario/registro" role="button">Crie uma conta</a> ou
+    <a class="btn btn-primary btn-lg" href="/usuario/login" role="button">Faça Login</a>
   </p>
+  {{/if}}
 </div>
 
 <h2>Postagens recentes</h2>
+
+{{#if user}}
+<a href="/postagem/add">
+  <button class="btn btn-primary mt-3" >
+          Adicionar Nova Postagem
+  </button>
+</a>
+<br><br>
+{{/if}}
 
 {{#each postagens}}
 

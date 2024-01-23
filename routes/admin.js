@@ -8,18 +8,15 @@ const Categoria = mongoose.model('categorias')
 require('../models/Postagem')
 const Postagem= mongoose.model('postagens')
 
+require('../models/Usuario')
+const Usuario = mongoose.model('usuarios')
+
 const {isAdmin} = require("../helpers/isAdmin")
 
 
 router.get('/',isAdmin,(req,res) =>{
     res.render('admin/index')
 })
-
-
-router.get('/posts',isAdmin, (req,res)=>{
-    res.send('Posts')
-})
-
 
 router.get('/categorias', isAdmin, (req,res) =>{
     Categoria.find().lean().then((categorias) =>{
@@ -125,7 +122,10 @@ router.post('/categorias/deletar', isAdmin, (req,res)=>{
 })
 
 router.get("/postagens", isAdmin, (req,res) =>{
-    Postagem.find().lean().populate({path: 'categoria', strictPopulate: false}).sort({data:'desc'}).then((postagens)=>{
+    Postagem.find().lean().populate([
+        {path: 'categoria', strictPopulate: false},
+        {path:'usuario',strictPopulate:false}]).sort({data:'desc'}).then((postagens)=>{
+
         res.render("admin/postagens",{postagens:postagens})
     })
     
@@ -147,16 +147,26 @@ router.post("/postagens/nova", isAdmin, (req,res)=>{
         descricao: req.body.descricao,
         conteudo: req.body.conteudo,
         categoria: req.body.categoria,
-        slug: req.body.slug
+        slug: req.body.slug,
+        usuario:req.user._id
     }
 
-    new Postagem(novaPostagem).save().then(()=>{
-        req.flash("success_msg", "Postagem criada com sucesso!")
-        res.redirect("/admin/postagens")
-    }).catch((err)=>{
-        req.flash("error_msg","Houve um erro!")
-        res.redirect("/admin/postagens")
-    })
+    const postagem = new Postagem(novaPostagem)
+    postagem.save().then(()=>{
+
+            Usuario.findOne({_id:req.user._id}).then((usuario)=>{
+                usuario.postagens.push(postagem._id)
+
+                usuario.save().then(()=>{
+                    req.flash("success_msg", "Postagem criada com sucesso!")
+                    res.redirect("/admin/postagens")
+                })
+            })
+            
+        }).catch((err)=>{
+            req.flash("error_msg","Houve um erro!")
+            res.redirect("/admin/postagens")
+        })
 })
 
 router.get("/postagens/edit/:id", isAdmin, (req,res)=>{

@@ -18,8 +18,13 @@ const Postagem = mongoose.model("postagens")
 require('./models/Categoria')
 const Categoria = mongoose.model("categorias")
 
+require('./models/Usuario')
+const Usuario = mongoose.model("usuarios")
+
 const passport = require("passport")
 require("./config/auth")(passport)
+
+const {isUser} = require("./helpers/isUser")
 
 //Configs
     //Sessao
@@ -39,13 +44,16 @@ app.use((req,res,next) =>{
     res.locals.error_msg = req.flash('error_msg')
     res.locals.error = req.flash("error")
     res.locals.user = req.user || null
+    if(req.user)
+    res.locals.admin = req.user.admin || null
+    
     next()
 })
     //BodyParser
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(bodyParser.json())
     //Handlebars
-app.engine('handlebars', handlebars.engine({dafaultLayout:'main'}))
+app.engine('handlebars', handlebars.engine({defaultLayout:'main'}))
 app.set('view engine', 'handlebars')
 
 
@@ -77,19 +85,51 @@ app.get('/',(req,res)=>{
     
 })
 
+app.get("/postagem/add",isUser,(req,res) =>{
+    Categoria.find().lean().then((categorias)=>{
+        res.render("postagem/add", {categorias:categorias})
+    }).catch((err) =>{
+        req.flash("error_msg", "Houve um erro ao carregar o formulario")
+        res.redirect("/")
+    })
+})
+
+app.post("/postagem/nova", isUser, (req,res)=>{
+    const novaPostagem = {
+        titulo: req.body.titulo,
+        descricao: req.body.descricao,
+        conteudo: req.body.conteudo,
+        categoria: req.body.categoria,
+        slug: req.body.slug,
+        usuario:req.user._id
+    }
+
+    const postagem = new Postagem(novaPostagem)
+    postagem.save().then(()=>{
+
+            Usuario.findOne({_id:req.user._id}).then((usuario)=>{
+                usuario.postagens.push(postagem._id)
+
+                usuario.save().then(()=>{
+                    req.flash("success_msg", "Postagem criada com sucesso!")
+                    res.redirect("/")
+                })
+            })
+            
+        }).catch((err)=>{
+            req.flash("error_msg","Houve um erro!")
+            res.redirect("/")
+        })
+})
+
 app.get("/postagem/:id", (req,res)=>{
-    Postagem.findOne({_id:req.params.id}).lean().then((postagem)=>{
+
+    Postagem.findOne({_id:req.params.id}).lean().populate(
+        {path:'usuario',strictPopulate:false}
+        ).sort({data:'desc'}).then((postagem)=>{
+
         if(postagem)
         {
-            const post = {
-
-                titulo: postagem.titulo,
-
-                data: postagem.data,
-
-                conteudo: postagem.conteudo
-
-            }
 
             res.render("postagem/index",{postagem:postagem})
         }
@@ -147,5 +187,5 @@ app.get("/categorias/:slug", (req,res)=>{
 
 
 app.listen(8081,()=>{
-    console.log("Servidor rodando em http://127.0.0.0:8081/admin")
+    console.log("Servidor rodando em http://127.0.0.0:8081/")
 })

@@ -2,19 +2,30 @@ const express = require("express")
 const mongoose = require("mongoose")
 const router = express.Router()
 const bcrypt = require("bcryptjs")
+const multer = require('multer')
 
 const passport = require("passport")
 const isAdmin = require("../helpers/isAdmin")
 
+//Importando models
 require("../models/Usuario")
 const Usuario = mongoose.model("usuarios")
 
+require('../models/Categoria')
+const Categoria = mongoose.model("categorias")
+
+require('../models/Postagem')
+const Postagem = mongoose.model('postagens')
+
+//Configurando multer para upload de arquivos
+const storage = multer.memoryStorage()
+const upload = multer({storage:storage})
 
 router.get("/registro", (req,res)=>{
     res.render("usuarios/registro")
 })
 
-router.post("/registro",(req,res)=>{
+router.post("/registro", upload.single("imagemPerfil"),(req,res)=>{
     var erros = []
 
     if(!req.body.nome || req.body.nome == undefined || req.body.nome == null)
@@ -44,11 +55,18 @@ router.post("/registro",(req,res)=>{
             }
             else
             {
+                
+              
+
                 const novoUsuario = new Usuario({
                     nome: req.body.nome,
                     email:req.body.email,
                     senha:req.body.senha,
-                    admin:true
+                    admin:true,
+                    imagemPerfil:{
+                        dados:req.file.buffer,
+                        contentType:req.file.mimetype
+                    }
                 })
 
                 bcrypt.genSalt(10,(err,salt)=>{
@@ -71,6 +89,7 @@ router.post("/registro",(req,res)=>{
                 })
             }
         }).catch((err)=>{
+            console.log(err)
             req.flash("error_msg","Houve um erro interno")
             res.redirect("/")
         })
@@ -101,6 +120,27 @@ router.get("/logout",(req,res)=>{
         res.redirect("/")
     })
     
+})
+
+router.get("/perfil",(req,res)=>{
+    res.render("usuarios/perfil")
+})
+
+router.get("/perfil/:id", (req,res)=>{
+    Usuario.findOne({_id:req.params.id}).lean().populate({path:'postagens', strictPopulate:false, populate:{
+        path:'categoria',strictPopulate:false}}).sort({data:'desc'}).then((usuario)=>{
+
+        const imagem = {
+            contentType: usuario.imagemPerfil.contentType,
+            dados: usuario.imagemPerfil.dados.toString('base64')
+        }
+        res.render("usuarios/perfil", {usuario:usuario, imagem:imagem})
+            
+        
+    }).catch((err)=>{
+        req.flash("error_msg","Não foi possivel achar usuário")
+        res.redirect("/")
+    })
 })
 
 module.exports = router

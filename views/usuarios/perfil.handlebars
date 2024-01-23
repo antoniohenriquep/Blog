@@ -1,0 +1,50 @@
+ <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-4">
+        <!-- Informações do Perfil -->
+        <div class="card">
+
+          {{#if imagem}}
+      <img src="data:{{imagem.contentType}};base64,{{imagem.dados}}" alt="Foto de Perfil" width="406px" height="420px">
+        {{else}}
+        <p>Sem foto de perfil</p>
+        {{/if}}
+          <div class="card-body">
+            <h5 class="card-title">{{usuario.nome}}</h5>
+            <p class="card-text">Descrição do usuário.</p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">E-mail: {{usuario.email}}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <!-- Posts ou Atividades do Usuário -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Atividades do Usuário</h5>
+
+            <ul>
+              {{#each usuario.postagens}}
+
+              
+              <li>
+                <h3>{{titulo}}</h3>
+                <p>{{descricao}} </p>
+                <hr>
+                <small>Categoria: {{categoria.nome}}</small>
+                <small>Data de publicação: {{data}}</small>
+                <a href="/postagem/{{_id}}" ><button class="btn btn-success mt-2">Leia mais</button></a>
+              </li>
+              {{else}}
+              <li>
+                <p>Esse usuário ainda não fez postagens</p>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
