@@ -188,6 +188,7 @@ app.get("/categorias/:slug", (req,res)=>{
 
 const PORT = process.env.PORT || 8081
 app.listen(PORT,()=>{
-    console.log(process.env.NODE_ENV)
+    console.log("O ambiente eh:"+process.env.NODE_ENV)
+    console.log("A porta eh"+PORT)
     //console.log("Servidor rodando em http://127.0.0.0:8081/")
 })
