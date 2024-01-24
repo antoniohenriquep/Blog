@@ -5,6 +5,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
 const mongoose = require('mongoose')
+const db = require("./config/db")
 
 const admin = require('./routes/admin')
 const usuario = require("./routes/usuario")
@@ -60,7 +61,7 @@ app.set('view engine', 'handlebars')
     //Mongoose
 mongoose.Promise = global.Promise
 
-mongoose.connect('mongodb://localhost:27017/blogapp').then(()=>{
+mongoose.connect(db.mongoURI).then(()=>{
     console.log("Conectou ao banco de dados")
 }).catch((err)=>{
     console.log("Nao foi possivel conectar-se ao banco de dados! Erro: "+ err)
@@ -185,7 +186,7 @@ app.get("/categorias/:slug", (req,res)=>{
 })
 
 
-
-app.listen(8081,()=>{
+const PORT = process.env.PORT || 8081
+app.listen(PORT,()=>{
     console.log("Servidor rodando em http://127.0.0.0:8081/")
 })
