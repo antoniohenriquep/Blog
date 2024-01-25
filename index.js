@@ -61,12 +61,12 @@ app.set('view engine', 'handlebars')
     //Mongoose
 mongoose.Promise = global.Promise
 
-mongoose.connect(db.mongoURI).then(()=>{
+mongoose.connect(db.mongoURI,
+    { useNewUrlParser: true, useUnifiedTopology: true }).then(()=>{
     console.log("Conectou ao banco de dados")
 }).catch((err)=>{
     console.log("Nao foi possivel conectar-se ao banco de dados! Erro: "+ err)
 })
-
 
     //Public
 app.use(express.static(path.join(__dirname,'public')))
@@ -188,7 +188,5 @@ app.get("/categorias/:slug", (req,res)=>{
 
 const PORT = process.env.PORT || 8081
 app.listen(PORT,()=>{
-    console.log("O ambiente eh:"+process.env.NODE_ENV)
-    console.log("A porta eh"+PORT)
-    //console.log("Servidor rodando em http://127.0.0.0:8081/")
+    console.log("Servidor rodando!")
 })
