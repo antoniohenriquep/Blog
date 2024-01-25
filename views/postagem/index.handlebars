@@ -2,7 +2,7 @@
     <div class="card-body">
         <h1>{{postagem.titulo}}</h1>
         <hr>
-        <small><strong>Criador:</strong>{{postagem.usuario.nome}} </small>
+        <small><strong>Criador:</strong><a href="/usuario/perfil/{{postagem.usuario._id}}">{{postagem.usuario.nome}} </small></a>
         <br>
         <small><strong>Data de publicação: </strong>{{postagem.data}} </small>
         <hr>

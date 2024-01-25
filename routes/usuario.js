@@ -62,7 +62,7 @@ router.post("/registro", upload.single("imagemPerfil"),(req,res)=>{
                     nome: req.body.nome,
                     email:req.body.email,
                     senha:req.body.senha,
-                    admin:true,
+                    admin:false,
                     imagemPerfil:{
                         dados:req.file.buffer,
                         contentType:req.file.mimetype
